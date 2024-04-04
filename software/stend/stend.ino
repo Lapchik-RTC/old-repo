@@ -52,10 +52,18 @@ void motor(byte vel, byte motor) {
 
   int vel_1 = (int)vel;
   int vel_2 = vel_1 * 2 - 255;
-  //vel_2 = map(vel_2, 0, 1023, -255, 255);
   digitalWrite(in1, !(vel_2 >= 0));
   digitalWrite(in2, (vel_2 > 0));
-  /*if (vel_2 < STICK_LUFT && vel_2 > -STICK_LUFT) {
+  
+  vel_2 = abs(vel_2);
+  analogWrite(pwmPin, vel_2);
+}
+
+
+void loop() {
+  Enotik.work();
+}
+/*if (vel_2 < STICK_LUFT && vel_2 > -STICK_LUFT) {
     v1_1 = 0;
     v2_1 = 0;
   }
@@ -63,9 +71,3 @@ void motor(byte vel, byte motor) {
     v1_1 = 0;
     v2_1 = 0;
   }*/
-  vel_2 = abs(vel_2);
-  analogWrite(pwmPin, vel_2);
-}
-void loop() {
-  Enotik.work();
-}

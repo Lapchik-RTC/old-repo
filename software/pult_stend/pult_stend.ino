@@ -19,7 +19,8 @@ void setup() {
   pinMode(axis_X, INPUT);
   pinMode(axis_Y, INPUT);
 }
-void sendmotors(int X1, int Y1, int Z) {
+
+void sendmotors(int X, int Y, int Z) {
   int m1 = 0;
   int m2 = 0;
   int m3 = 0;
@@ -33,9 +34,9 @@ void sendmotors(int X1, int Y1, int Z) {
     m2 = MAX_SPEED * Z;
     m3 = MAX_SPEED * Z;
   } else {
-    m1 = 0;
-    m2 = 0;
-    m3 = 0;
+    m1 = -1*(X/abs(X));
+    m2 = -1*(-1*(X/abs(X)));
+    m3 = 1*(Y/abs(Y));
   }
 
   if (m1 > MAX_SPEED)
@@ -55,11 +56,11 @@ void sendmotors(int X1, int Y1, int Z) {
   speed1 = map(analogRead(A2), 0, 1023, 0, 255);
   speed2 = map(analogRead(A2), 0, 1023, 0, 255);
   speed3 = map(analogRead(A2), 0, 1023, 0, 255);
-  /*Serial.print(speed1);
+  Serial.print(m1);
   Serial.print('\t');
   Serial.print(m2);
   Serial.print('\t');
-  Serial.println(m3);*/
+  Serial.println(m3);
   Enotik.send_message(1, (byte)speed1, 1);
   Enotik.send_message(1, (byte)speed2, 2);
   Enotik.send_message(1, (byte)speed3, 3);
