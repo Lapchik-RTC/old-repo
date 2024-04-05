@@ -9,7 +9,7 @@
 #define axis_X A4
 #define axis_Y A5
 #define zbutt1 A2
-#define MAX_SPEED 60
+#define MAX_SPEED 200
 #define FILTR_K 20
 int Z = 0;
 void setup() {
@@ -34,9 +34,9 @@ void sendmotors(int X, int Y, int Z) {
     m2 = MAX_SPEED * Z;
     m3 = MAX_SPEED * Z;
   } else {
-    m1 = -1*(X/abs(X));
-    m2 = -1*(-1*(X/abs(X)));
-    m3 = 1*(Y/abs(Y));
+    m1 = (Y-X)*(-1)*(X/abs(X));
+    m2 = (X-Y)*(-1)*(-1*(X/abs(X)));
+    m3 = (Y+X)*1*(Y/abs(Y));
   }
 
   if (m1 > MAX_SPEED)
@@ -53,13 +53,14 @@ void sendmotors(int X, int Y, int Z) {
     m3 = MAX_SPEED;
   if (m3 < -MAX_SPEED) 
     m3 = -MAX_SPEED;
-  speed1 = map(analogRead(A2), 0, 1023, 0, 255);
-  speed2 = map(analogRead(A2), 0, 1023, 0, 255);
-  speed3 = map(analogRead(A2), 0, 1023, 0, 255);
+  speed1 = map(m1, -255, 255, 0, 255);
+  speed2 = map(m2, -255, 255, 0, 255);
+  speed3 = map(m3, -255, 255, 0, 255);
+  Serial.print("m1: ");
   Serial.print(m1);
-  Serial.print('\t');
+  Serial.print("\tm2: ");
   Serial.print(m2);
-  Serial.print('\t');
+  Serial.print("\tm3: ");
   Serial.println(m3);
   Enotik.send_message(1, (byte)speed1, 1);
   Enotik.send_message(1, (byte)speed2, 2);

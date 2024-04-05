@@ -9,11 +9,11 @@
 #define INB1 27
 #define INA2 28
 #define INB2 29
-#define INA3 3
-#define INB3 2
-#define PWM1 9
-#define PWM2 10
-#define PWM3 A0
+#define INA3 2
+#define INB3 A0
+#define PWM1 10
+#define PWM2 9
+#define PWM3 3
 void motor(byte vel, byte motor);
 void setup() {
   Serial1.begin(9600);
@@ -51,12 +51,25 @@ void motor(byte vel, byte motor) {
   ///
 
   int vel_1 = (int)vel;
-  int vel_2 = vel_1 * 2 - 255;
-  digitalWrite(in1, !(vel_2 >= 0));
-  digitalWrite(in2, (vel_2 > 0));
-  
-  vel_2 = abs(vel_2);
-  analogWrite(pwmPin, vel_2);
+  //vel_1 = map(vel_1, 0, 255, -255, 255);
+  vel_1 = vel_1 * 2 - 255;
+  digitalWrite(in1, !(vel_1 >= 0));
+  digitalWrite(in2, (vel_1 > 0));
+
+  /*Serial.print("\tm2: ");
+  Serial.print(m2);
+  Serial.print("\tm3: ");
+  Serial.println(m3);
+*/
+  for (int i = 0; i < motor; i++) {
+    Serial.print('\t');
+  }
+  Serial.print("m1: ");
+  Serial.println(vel_1);
+  vel_1 = abs(vel_1);
+
+
+  analogWrite(pwmPin, vel_1);
 }
 
 
