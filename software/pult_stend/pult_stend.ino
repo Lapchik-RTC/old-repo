@@ -34,9 +34,9 @@ void sendmotors(int X, int Y, int Z) {
     m2 = MAX_SPEED * Z;
     m3 = MAX_SPEED * Z;
   } else {
-    m1 = (Y-X)*(-1)*(X/abs(X));
-    m2 = (X-Y)*(-1)*(-1*(X/abs(X)));
-    m3 = (Y+X)*1*(Y/abs(Y));
+    m1 = -Y*0.5;
+    m2 = Y;
+    m3=m1;
   }
 
   if (m1 > MAX_SPEED)
