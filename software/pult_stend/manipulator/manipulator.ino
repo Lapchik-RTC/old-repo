@@ -5,49 +5,119 @@ double dist(double x1, double y1, double x2, double y2) {
   return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
 }
 
-void loop() {
-  int X = analogRead(2);
-  int Y = analogRead(3);
-  double x1 = -512;
-  double y1 = 0;
-  double x2 = -512;
-  double y2 = 512 * 0.57735026919;
-  double x3 = -512 * 0.57735026919;
-  double y3 = 512;
-  double x4 = 0;
-  double y4 = 512;
-  double x5 = 512 * 0.57735026919;
-  double y5 = 512;
-  double x6 = 512;
-  double y6 = 512 * 0.57735026919;
-  double x7 = 512;
-  double y7 = 0;
-  double x8 = 512;
-  double y8 = -512 * 0.57735026919;
-  double x9 = 512 * 0.57735026919;
-  double y9 = -512;
-  double x10 = 0;
-  double y10 = -512;
-  double x11 = -512 * 0.57735026919;
-  double y11 = -512;
-  double x12 = -512;
-  double y12 = -512 * 0.57735026919;
-  double doubles[]  = {x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, x6, y6, x7, y7, x8, y8, x9, y9, x10, y10, x11, y11, x12, y12};
-  if (abs(X) > 50 && abs(Y) > 50) {
-    int bestInd = 0;
-    double bestDist = dist(X, Y, doubles[0], doubles[1]);
-    double nowBD;
-    for (int i = 0; i < 12; i++) {
-      nowBD = dist(X, Y, doubles[2 * i], doubles[2 * i + 1]);
-      if (nowBD < bestDist) {
-        bestInd = i;
-        bestDist = nowBD;
-      }
-    }
+// int Vs[] = {0, 0, 0};
 
-  } else {
-    //motor1(0, 0);
-    //motor2(0, 0);
-    //motor3(0, 0);
+int vel1 = 0;
+int vel2 = 0;
+int vel3 = 0;
+
+void findVs(int x, int y) {  //x, y -- координаты джостика
+  int v1 = 0;
+  int v2 = 0;
+  int v3 = 0;
+  int* Vplus = procesVs(x, y);  //скорости из реального положения джостика
+  v1 += Vplus[0];
+  v2 += Vplus[1];
+  v3 += Vplus[2];
+  int* Vminus = procesVs(-x, -y);  //скорости из противоположной точки, относительно реального положения джостика
+  v1 -= Vminus[0];
+  v2 -= Vminus[1];
+  v3 -= Vminus[2];
+  vel1 = v1;
+  vel2 = v2;
+  vel3 = v3;
+}
+
+int* procesVs(int x, int y) {  //рассчёт НЕ конечных скоростей
+  int v1 = 0;
+  int v2 = 0;
+  int v3 = 0;
+
+  double alpha = 0;                         //потом задаётся. Может, с помощью функции
+  double beta = 0;                          //120* - alpha
+  int Vs = (dist(x, y, 0, 0) / 512) * 255;  //функция задания скорости порпорционально отклонению джостика
+  if (Vs > 255) {
+    Vs = 255;
+  }
+  int polozh;
+  double anglePos = atan2(x, y);
+  if (anglePos >= (-PI / 6) && anglePos <= (PI / 2)) {  // верх право
+    polozh = 1;
+    alpha = atan2(x, y) + (PI / 6);
+  } else if (anglePos >= (-5 * PI / 6) && anglePos < (-PI / 6)) {  //низ
+    polozh = 2;
+    alpha = atan2(x, y) - (PI / 6);
+  } else if (anglePos > (PI / 2) && anglePos <= PI) {  //верх лево верх
+    polozh = 3;
+    alpha = atan2(x, y) + (5 * PI / 6);
+  } else {  //верх лево низ
+    polozh = 4;
+    alpha = atan2(x, y) + (PI / 6);
+  }
+  beta = (2 * PI / 3) - alpha;
+  int Valpha = alpha / (2 * PI / 3) * Vs;
+  int Vbeta = beta / (2 * PI / 3) * Vs;
+  if (polozh == 1) {
+    v1 = Vbeta;
+    v3 = Valpha;
+  } else if (polozh == 2) {
+    v2 = Vbeta;
+    v3 = Valpha;
+  } else if (polozh == 3) {
+    v2 = Vbeta;
+    v1 = Valpha;
+  } else {  //4 сектор, то есть polozh = 4;
+
+    v1 = Vbeta;
+    v2 = Valpha;
+  }
+
+  int arr[] = { v1, v2, v3 };
+  return arr;
+}
+// double x1 = -512;
+// double y1 = 0;
+// double x2 = -512;
+// double y2 = 512 * 0.57735026919;
+// double x3 = -512 * 0.57735026919;
+// double y3 = 512;
+// double x4 = 0;
+// double y4 = 512;
+// double x5 = 512 * 0.57735026919;
+// double y5 = 512;
+// double x6 = 512;
+// double y6 = 512 * 0.57735026919;
+// double x7 = 512;
+// double y7 = 0;
+// double x8 = 512;
+// double y8 = -512 * 0.57735026919;
+// double x9 = 512 * 0.57735026919;
+// double y9 = -512;
+// double x10 = 0;
+// double y10 = -512;
+// double x11 = -512 * 0.57735026919;
+// double y11 = -512;
+// double x12 = -512;
+// double y12 = -512 * 0.57735026919;
+
+void loop() {
+  findVs(100, 100);
+  int x = analogRead(A4);
+  int y = analogRead(A5);
+  //double doubles[] = { x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, x6, y6, x7, y7, x8, y8, x9, y9, x10, y10, x11, y11, x12, y12 };
+  // int bestInd = 0;
+  //   double bestDist = dist(x, y, doubles[0], doubles[1]);
+  //   double nowBD;
+  if (abs(x) > 50 && abs(y) > 50) {
+    findVs(x, y);
+    motor(1, vel1);
+    motor(2, vel2);
+    motor(3, vel3);
+  }
+
+  else {
+    motor(1, 0);
+    motor(2, 0);
+    motor(3, 0);
   }
 }
