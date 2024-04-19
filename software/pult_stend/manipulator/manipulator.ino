@@ -35,7 +35,7 @@ int* procesVs(int x, int y) {  //рассчёт НЕ конечных скоро
 
   double alpha = 0;                         //потом задаётся. Может, с помощью функции
   double beta = 0;                          //120* - alpha
-  int Vs = (dist(x, y, 0, 0) / 512) * 255;  //функция задания скорости порпорционально отклонению джостика
+  int Vs = (dist(x, y, 0, 0) / 255) * 255;  //функция задания скорости порпорционально отклонению джостика
   if (Vs > 255) {
     Vs = 255;
   }
@@ -54,7 +54,7 @@ int* procesVs(int x, int y) {  //рассчёт НЕ конечных скоро
     polozh = 4;
     alpha = atan2(x, y) + (PI / 6);
   }
-  beta = (2 * PI / 3) - alpha;
+  beta = (TWO_PI / 3) - alpha;
   int Valpha = alpha / (2 * PI / 3) * Vs;
   int Vbeta = beta / (2 * PI / 3) * Vs;
   if (polozh == 1) {
@@ -101,14 +101,13 @@ int* procesVs(int x, int y) {  //рассчёт НЕ конечных скоро
 // double y12 = -512 * 0.57735026919;
 
 void loop() {
-  findVs(100, 100);
   int x = analogRead(A4);
   int y = analogRead(A5);
   //double doubles[] = { x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, x6, y6, x7, y7, x8, y8, x9, y9, x10, y10, x11, y11, x12, y12 };
   // int bestInd = 0;
   //   double bestDist = dist(x, y, doubles[0], doubles[1]);
   //   double nowBD;
-  if (abs(x) > 50 && abs(y) > 50) {
+  if (abs(x) < 50 && abs(y) < 50) {
     findVs(x, y);
     motor(1, vel1);
     motor(2, vel2);
@@ -120,4 +119,6 @@ void loop() {
     motor(2, 0);
     motor(3, 0);
   }
+  Serial.println(vel1);
+  delay(10);
 }
