@@ -20,8 +20,8 @@ void setup() {
   pinMode(axis_Y, INPUT);
 }
 
-void sendmotors(int X, int Y, int Z) {
-  int m1 = 0;
+void sendmotors(int X, int Y) {
+  /*int m1 = 0;
   int m2 = 0;
   int m3 = 0;
   int speed1 = 0;
@@ -61,10 +61,12 @@ void sendmotors(int X, int Y, int Z) {
   Serial.print("\tm2: ");
   Serial.print(m2);
   Serial.print("\tm3: ");
-  Serial.println(m3);
-  Enotik.send_message(1, (byte)speed1, 1);
-  Enotik.send_message(1, (byte)speed2, 2);
-  Enotik.send_message(1, (byte)speed3, 3);
+  Serial.println(m3);*/
+  Serial.println(X);
+  Enotik.send_message(1, (byte)X, (byte)Y);
+  //Serial.println(X);
+  /*Enotik.send_message(1, (byte)speed2, 2);
+  Enotik.send_message(1, (byte)speed3, 3);*/
 }
 
 
@@ -82,7 +84,7 @@ void loop() {
   X1 = X1 / 2 - 255;
   if ((Y1 < FILTR_K) && (Y1 > -FILTR_K)) Y1 = 0;
   if ((X1 < FILTR_K) && (X1 > -FILTR_K)) X1 = 0;
-
+  /*
   if ((analogRead(zbutt1) > 800) && Z == 0) {
     while ((analogRead(zbutt1) > 800)) {}
     Z = 1;
@@ -99,6 +101,9 @@ void loop() {
     while ((analogRead(zbutt1) < 200)) {}
     Z = 0;
   }
+*/
 
-  sendmotors(X1, Y1, Z);
+  int xa = map(X1, -255,255,0,255);
+  int ya = map(Y1, -255,255,0,255);
+  sendmotors(xa, ya);
 }
