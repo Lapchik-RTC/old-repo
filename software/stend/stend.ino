@@ -29,6 +29,7 @@ void setup() {
   Serial.begin(9600);
   Enotik.init_slave(0x01);
   Enotik.bind(1, main1);
+  Enotik.bind(2, main2);
   pinMode(INA1, 1);
   pinMode(INB1, 1);
   pinMode(PWM1, 1);
@@ -94,69 +95,98 @@ void findVs(int x, int y) {  //x, y -- координаты джостика
   v2 += Vplus[1];
   v3 += Vplus[2];
   int* Vminus = procesVs(-x, -y);  //скорости из противоположной точки, относительно реального положения джостика
-  // v1 -= Vminus[0];
-  // v2 -= Vminus[1];
-  // v3 -= Vminus[2];
+  v1 -= Vminus[0];
+  v2 -= Vminus[1];
+  v3 -= Vminus[2];
   Serial.print(v1);
   Serial.print("  ");
   Serial.print(v2);
   Serial.print("  ");
   Serial.println(v3);
-  Serial.print("  ");
-  Serial.println(atan2(y, x));
+  Serial.print("\n");
+  //Serial.println(atan2(y, x));
   vel1 = v1;
   vel2 = v2;
   vel3 = v3;
   motor(1, vel1);
   motor(2, vel2);
   motor(3, vel3);
+  delay(10);
 }
-int* procesVs(int x, int y) {  //рассчёт НЕ конечных скоростей
-  int v1;
-  int v2;
-  int v3;
 
-  double alpha = 0;                         //потом задаётся. Может, с помощью функции
+int arr[] = { 0, 0, 0 };  //относится к функции ниже. А сама функция возвращает лишь ссылку на него
+
+int* procesVs(int x, int y) {  //рассчёт НЕ конечных скоростей
+  int v1 = 0;
+  int v2 = 0;
+  int v3 = 0;
+
+  double alpha = 0;                         //потом задаётся
   double beta = 0;                          //120* - alpha
-  int Vs = (dist(x, y, 0, 0) / 255) * 255;  //функция задания скорости порпорционально отклонению джостика
+  int Vs = (dist(x, y, 0, 0) / 255) * 170;  //функция задания скорости порпорционально отклонению джостика
   if (Vs > 255) {
     Vs = 255;
   }
   int polozh;
   double anglePos = atan2(y, x);
-  if (anglePos >= (-PI / 6) && anglePos <= (PI / 2)) {  // верх право
+  if (anglePos >= (-PI / 6) && anglePos <= (PI / 2)) {             // верх право
     polozh = 1;
     alpha = atan2(y, x) + (PI / 6);
   } else if (anglePos >= (-5 * PI / 6) && anglePos < (-PI / 6)) {  //низ
     polozh = 2;
-    alpha = atan2(y, x) - (PI / 6);
-  } else if (anglePos > (PI / 2) && anglePos <= PI) {  //верх лево верх
-    polozh = 3;
     alpha = atan2(y, x) + (5 * PI / 6);
-  } else {  //верх лево низ
+  } else if (anglePos > (PI / 2) && anglePos <= PI) {              //верх лево верх
+    polozh = 3;
+    alpha = atan2(y, x) - (PI / 2);
+  } else {                                                         //верх лево низ
     polozh = 4;
-    alpha = atan2(y, x) + (PI / 6);
+    alpha = abs(-PI - atan2(y, x)) + (PI / 2);
   }
   beta = (TWO_PI / 3) - alpha;
   int Valpha = alpha / (TWO_PI / 3) * Vs;
   int Vbeta = beta / (TWO_PI / 3) * Vs;
   if (polozh == 1) {
-    v1 = Vbeta;
-    v3 = Valpha;
+    v3 = Vbeta;
+    v1 = Valpha;
   } else if (polozh == 2) {
     v2 = Vbeta;
     v3 = Valpha;
   } else if (polozh == 3) {
-    v2 = Vbeta;
-    v1 = Valpha;
+    v1 = Vbeta;
+    v2 = Valpha;
   } else {  //4 сектор, то есть polozh = 4;
 
     v1 = Vbeta;
     v2 = Valpha;
   }
-
-  int arr[] = { v1, v2, v3 };
+  arr[0] = v1;
+  arr[1] = v2;
+  arr[2] = v3;
+  // Serial.print("Valpha = ");
+  // Serial.print(arr[0]);
+  // Serial.print(" Vbeta ");
+  // Serial.print(arr[1]);
+  // Serial.print(" Vbeta2 ");
+  // Serial.print(arr[2]);
+  // Serial.println("\n");
   return arr;
+}
+
+void main2(byte e1, byte o) {
+  int e = (int)e1;
+  if(e == 2) {
+  motor(1, 200);
+  motor(2, 200);
+  motor(3, 200);
+  delay(10);
+  }
+  else if(e == 0) {
+  motor(1, -200);
+  motor(2, -200);
+  motor(3, -200);
+  delay(10);
+  }
+  // Serial.print( e);
 }
 
 void main1(byte x1, byte y1) {
@@ -189,7 +219,6 @@ void main1(byte x1, byte y1) {
     motor(3, 0);
 
   }
-
   else {
     findVs(x, y);
   }
