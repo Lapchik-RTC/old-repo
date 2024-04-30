@@ -109,8 +109,8 @@ void findVs(int x, int y) {  //x, y -- координаты джостика
   vel2 = v2;
   vel3 = v3;
   motor(1, vel1);
-  motor(2, vel2);
-  motor(3, vel3);
+  motor(3, vel2);
+  motor(2, vel3);
   delay(10);
 }
 
