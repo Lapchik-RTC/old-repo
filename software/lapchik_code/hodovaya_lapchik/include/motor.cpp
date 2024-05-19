@@ -129,9 +129,9 @@ void Motor::work()
     }
 
   }
-    //Serial1.print(pinPWM);
-      //Serial1.print(' ');
-       //Serial1.println(getCurrent_mA());
+    //Serial3.print(pinPWM);
+      //Serial3.print(' ');
+       //Serial3.println(getCurrent_mA());
 
   if (newSpeed == curSpeed)
     return;

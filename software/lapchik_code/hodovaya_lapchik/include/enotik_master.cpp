@@ -11,9 +11,9 @@ EnotikMaster Enotik;
 
 void serialEvent1()
 {
-  while (Serial1.available())
+  while (Serial3.available())
   {
-    Enotik.parser.parse(Serial1.read());
+    Enotik.parser.parse(Serial3.read());
   }
 }
 
@@ -105,7 +105,7 @@ void EnotikMaster:: send_request()
 {
   message_data[ENOTIK_ID_OFFSET]=id;
   message_data[ENOTIK_CRC8_OFFSET]=crc8(message_data, ENOTIK_MESSAGE_LENGTH-1);
-  Serial1.write(message_data,ENOTIK_MESSAGE_LENGTH);
+  Serial3.write(message_data,ENOTIK_MESSAGE_LENGTH);
   
 }
 /**************************************************************************************
