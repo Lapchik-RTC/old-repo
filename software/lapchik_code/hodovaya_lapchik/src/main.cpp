@@ -1,14 +1,14 @@
 #include <Arduino.h>
-/*#include "crc8.h"
+#include "crc8.h"
 #include "Enotik.h"
 #include "enotik_master.h"
 #include "Enotik_message_format.h"
 #include "motor.h"
 #include "parser.h"
-#include "Periph.h"*/
+#include "Periph.h"
 #include <mymotor.h>
-//#include "MotorLib.h"
-Mymotor motorLF;
+#include "MotorLib.h"
+
 
 //motor1
 #define ENC1 18
@@ -73,6 +73,22 @@ void interr3() {
   *motorEncs[3] = *motorEncs[3] - (reverses[3] * 2 - 1) * (digitalRead(directionPins[3]) * 2 - 1);
 }*/
 
+class Mymotor{
+    public:
+    void attach(uint8_t ma, uint8_t mb, uint8_t mpwm){
+      _maPin = ma;
+      _ma = digitalPinToPort(ma);
+      _mb = digitalPinToPort(mb);
+    }
+    void cout(){
+      Serial.println("pin");
+    }
+    
+    private:
+    uint8_t _ma, _mb, _mpwm, _maPin;
+};
+Mymotor motorLF;
+
 //=================SETUP=================
 void setup() {
   Serial.begin(9600);
@@ -95,8 +111,9 @@ void setup() {
   pinMode(INA6, 1);
   pinMode(INB6, 1);
   pinMode(PWM6, 1);
+  motorLF.attach(INA1, INB1, PWM1);
 }
 
 void loop() {
-  //Enotik.work();
+  Enotik.work();
 }
