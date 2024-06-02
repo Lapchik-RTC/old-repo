@@ -9,11 +9,13 @@
 #define INB1 27
 #define INA2 28
 #define INB2 29
-#define INA3 2
-#define INB3 A0
-#define PWM1 10
-#define PWM2 9
-#define PWM3 3
+#define INA3 30
+#define INB3 31
+#define PWM1 A13
+#define PWM2 A15
+#define PWM3 A14
+
+// датчики тока 3 - А12, 2 - А11, 1 - А10
 
 int vel1 = 0;
 int vel2 = 0;
