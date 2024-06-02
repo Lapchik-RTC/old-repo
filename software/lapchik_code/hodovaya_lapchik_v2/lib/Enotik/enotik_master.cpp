@@ -4,16 +4,16 @@
  **************************************************************************************/
 #include "Enotik_master.h"
 #include "crc8.h"
-#include "motor.h"
+//#include "motor.h"
 
 EnotikMaster Enotik;
 
 
 void serialEvent1()
 {
-  while (Serial3.available())
+  while (Serial1.available())
   {
-    Enotik.parser.parse(Serial3.read());
+    Enotik.parser.parse(Serial1.read());
   }
 }
 
@@ -74,8 +74,8 @@ void EnotikMaster:: work()
   //Часть метода, определяющая что делать при потере связи.
   if(millis()-last_answer_time>time_answer) 
   {
-motor1.brake();
-motor2.brake();
+//motor1.brake();
+//motor2.brake();
   }
   //Выход из метода, если не было полученных байт.
   if(is_answer_received==false)
@@ -105,7 +105,7 @@ void EnotikMaster:: send_request()
 {
   message_data[ENOTIK_ID_OFFSET]=id;
   message_data[ENOTIK_CRC8_OFFSET]=crc8(message_data, ENOTIK_MESSAGE_LENGTH-1);
-  Serial3.write(message_data,ENOTIK_MESSAGE_LENGTH);
+  Serial1.write(message_data,ENOTIK_MESSAGE_LENGTH);
   
 }
 /**************************************************************************************
