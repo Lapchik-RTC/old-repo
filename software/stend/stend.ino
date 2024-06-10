@@ -31,8 +31,7 @@ void setup() {
   Serial.begin(9600);
   Enotik.init_slave(0x01);
   Enotik.bind(1, main1);
-  Enotik.bind(2, main2);
-  pinMode(INA1, 1);
+  pinMode(INA1, 1); 
   pinMode(INB1, 1);
   pinMode(PWM1, 1);
   pinMode(INA2, 1);
