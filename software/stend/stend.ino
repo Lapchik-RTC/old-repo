@@ -5,15 +5,15 @@
 #include "motor.h"
 #include "parser.h"
 #include "Periph.h"
-#define INA1 26
-#define INB1 27
-#define INA2 28
-#define INB2 29
-#define INA3 30
-#define INB3 31
-#define PWM1 A13
-#define PWM2 A15
-#define PWM3 A14
+#define INA1 17
+#define INB1 12
+#define INA2 15
+#define INB2 16
+#define INA3 13
+#define INB3 14
+#define PWM1 2
+#define PWM2 5
+#define PWM3 4
 
 // датчики тока 3 - А12, 2 - А11, 1 - А10
 
@@ -25,9 +25,9 @@ double dist(double x1, double y1, double x2, double y2);
 void findVs(int x, int y);
 int* procesVs(int x, int y);
 //void main(byte x, byte y);
-
+  
 void setup() {
-  Serial1.begin(9600);
+  Serial1.begin(19200);
   Serial.begin(9600);
   Enotik.init_slave(0x01);
   Enotik.bind(1, main1);
@@ -131,16 +131,16 @@ int* procesVs(int x, int y) {  //рассчёт НЕ конечных скоро
   }
   int polozh;
   double anglePos = atan2(y, x);
-  if (anglePos >= (-PI / 6) && anglePos <= (PI / 2)) {             // верх право
+  if (anglePos >= (-PI / 6) && anglePos <= (PI / 2)) {  // верх право
     polozh = 1;
     alpha = atan2(y, x) + (PI / 6);
   } else if (anglePos >= (-5 * PI / 6) && anglePos < (-PI / 6)) {  //низ
     polozh = 2;
     alpha = atan2(y, x) + (5 * PI / 6);
-  } else if (anglePos > (PI / 2) && anglePos <= PI) {              //верх лево верх
+  } else if (anglePos > (PI / 2) && anglePos <= PI) {  //верх лево верх
     polozh = 3;
     alpha = atan2(y, x) - (PI / 2);
-  } else {                                                         //верх лево низ
+  } else {  //верх лево низ
     polozh = 4;
     alpha = abs(-PI - atan2(y, x)) + (PI / 2);
   }
@@ -176,19 +176,18 @@ int* procesVs(int x, int y) {  //рассчёт НЕ конечных скоро
 
 void main2(byte e1, byte o) {
   int e = (int)e1;
-  if(e == 2) {
-  motor(1, 200);
-  motor(2, 200);
-  motor(3, 200);
-  delay(10);
+  if (e == 2) {
+    motor(1, 200);
+    motor(2, 200);
+    motor(3, 200);
+    delay(10);
+  } else if (e == 0) {
+    motor(1, -200);
+    motor(2, -200);
+    motor(3, -200);
+    delay(10);
   }
-  else if(e == 0) {
-  motor(1, -200);
-  motor(2, -200);
-  motor(3, -200);
-  delay(10);
-  }
-  // Serial.print( e);
+  //Serial.print(e);
 }
 
 void main1(byte x1, byte y1) {
@@ -199,8 +198,8 @@ void main1(byte x1, byte y1) {
   int y = map(y2, 0, 255, -255, 255);
   Serial.print(x);
   Serial.print("  ");
-  Serial.print(y);
-  Serial.print("  ");
+  Serial.println(y);
+
   //*/
   /*x = x * 2 - 255;
   y = y * 2 - 255;*/
@@ -215,21 +214,20 @@ void main1(byte x1, byte y1) {
   //   double bestDist = dist(x, y, doubles[0], doubles[1]);
   //   double nowBD;
 
-  if (abs(x) < 50 && abs(y) < 50) {
+  /*if (abs(x) < 50 && abs(y) < 50) {
     motor(1, 0);
     motor(2, 0);
     motor(3, 0);
 
-  }
-  else {
+  } else {
     findVs(x, y);
   }
-  Serial.println(" ");
-  delay(10);
+
+  delay(10);*/
 }
 
 void loop() {
-  Enotik.work();
+ Enotik.work();  
 }
 /*if (vel_2 < STICK_LUFT && vel_2 > -STICK_LUFT) {
     v1_1 = 0;
