@@ -117,6 +117,3 @@ void loop() {
   //manipGo(Z);
   Serial.println(1);
 }
-/*
- 
-*/
