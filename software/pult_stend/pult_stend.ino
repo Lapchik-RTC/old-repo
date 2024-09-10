@@ -75,6 +75,7 @@ void manipGo(int z){
 }
 
 void loop() {
+
   Enotik.work();
 //   int x = 0, y = 0, X1 = 0, Y1 = 0;
 //   for (int i = 0; i < FILTR_K; i++) {
@@ -113,7 +114,8 @@ void loop() {
 //   int xa = map(X1, -255, 255, 0, 255);
 //   int ya = map(Y1, -255, 255, 0, 255);
 //   //sendmotors(xa, ya);
-  Enotik.send_message(1, 1/*(byte)xa*/, 1/*(byte)ya*/);
+  //Enotik.send_message(1, 1/*(byte)xa*/, 1/*(byte)ya*/);
   //manipGo(Z);
-  Serial.println(1);
+  Serial.println(analogRead(A9));
+  Enotik.send_message(4, (byte)analogRead(A9), (byte)analogRead(A11));
 }
