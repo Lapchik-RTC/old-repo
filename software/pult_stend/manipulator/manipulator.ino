@@ -1,4 +1,32 @@
+#include "crc8.h"
+#include "Enotik.h"
+#include "enotik_master.h"
+#include "Enotik_message_format.h"
+#include "motor.h"
+#include "parser.h"
+#include "Periph.h"
+//#include "ryabina.h"
+#include <Servo.h>
+void manipulator(byte v1, byte v2);
+
 void setup() {
+  Serial1.begin(19200);
+  Serial.begin(9600);
+  Enotik.init_slave(0x01);
+  // Enotik.bind(2, motor);
+  //Enotik.bind(5, zahvat);
+  //Enotik.bind(3, line);
+  Enotik.bind(4, manipulator);
+  // upserv.attach(3);
+  // cserv.attach(2);
+  // cserv.write(40);
+  // //serv.attach(SERVO1_PIN);
+  // pinMode(INA1, 1);
+  // pinMode(INB1, 1);
+  // pinMode(PWM1, 1);
+  // pinMode(INA2, 1);
+  // pinMode(INB2, 1);
+  // pinMode(PWM2, 1);
 }
 
 double dist(double x1, double y1, double x2, double y2) {
@@ -11,7 +39,7 @@ int vel1 = 0;
 int vel2 = 0;
 int vel3 = 0;
 
-void findVs(int x, int y) {  //x, y -- координаты джостика
+void findVs(int x, int y) {  //x, y  --  координаты джостика
   int v1 = 0;
   int v2 = 0;
   int v3 = 0;
@@ -100,25 +128,37 @@ int* procesVs(int x, int y) {  //рассчёт НЕ конечных скоро
 // double x12 = -512;
 // double y12 = -512 * 0.57735026919;
 
-void loop() {
-  int x = analogRead(A4);
-  int y = analogRead(A5);
+void manipulator(byte x1, byte y1) {
+  int x = map(x1, 0, 255, 0, 1023);
+  int y = map(y1, 0, 255, 0, 1023);
+  Serial.print(x);
+  Serial.print("\t");
+  Serial.println(y);
+  
+  // Serial.println(x);
+  // x = map(x1, 1, 1023, 1, 255);
+  // Serial.println(x);
   //double doubles[] = { x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, x6, y6, x7, y7, x8, y8, x9, y9, x10, y10, x11, y11, x12, y12 };
   // int bestInd = 0;
   //   double bestDist = dist(x, y, doubles[0], doubles[1]);
   //   double nowBD;
-  if (abs(x) < 50 && abs(y) < 50) {
+  if (abs(x) > 50 && abs(y) > 50) {
     findVs(x, y);
-    motor(1, vel1);
-    motor(2, vel2);
-    motor(3, vel3);
+   // motor(1, vel1);
+   // motor(2, vel2);
+   // motor(3, vel3);
   }
 
   else {
-    motor(1, 0);
-    motor(2, 0);
-    motor(3, 0);
+    // motor(1, 0);
+    // motor(2, 0);
+    // motor(3, 0);
   }
-  Serial.println(vel1);
+  // Serial.println(vel1);
   delay(10);
+}
+
+
+void loop() {
+  Enotik.work();
 }
